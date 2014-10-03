@@ -11,7 +11,7 @@ local cyclefocus = require('cyclefocus')
 
 -- | Theme | --
 
-local theme = "pro-dark"
+local theme = "pro-medium-dark"
 
 beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/" .. theme .. "/theme.lua")
 
@@ -58,14 +58,13 @@ local shexec = awful.util.spawn_with_shell
 modkey        = "Mod4"
 terminal      = "termite"
 tmux          = "termite -e tmux"
-termax        = "termite --geometry 1680x1034+0+22"
+termax        = "termite --geometry 1366x700+0+42"
 rootterm      = "sudo -i termite"
 ncmpcpp       = "urxvt -geometry 254x60+80+60 -e ncmpcpp"
 newsbeuter    = "urxvt -g 210x50+50+50 -e newsbeuter"
 browser       = "firefox"
 filemanager   = "spacefm"
-en_uk         = "setxkbmap -layout 'us,ua' -variant 'winkeys' -option 'grp:caps_toggle,grp_led:caps,compose:menu' &"
-en_ru         = "setxkbmap -layout 'us,ru' -variant 'winkeys' -option 'grp:caps_toggle,grp_led:caps,compose:menu' &"
+en_ru         = "setxkbmap -layout 'us,ru' -variant 'winkeys' -option 'grp:caps_toggle,grp_led:caps,compose:ralt' &"
 configuration = termax .. ' -e "vim -O $HOME/.config/awesome/rc.lua $HOME/.config/awesome/themes/' ..theme.. '/theme.lua"'
 
 -- | Table of layouts | --
@@ -227,7 +226,8 @@ mailwidget:set_bgimage(beautiful.widget_display)
 
 cpu_widget = lain.widgets.cpu({
     settings = function()
-        widget:set_markup(space3 .. cpu_now.usage .. "%" .. markup.font("Tamsyn 4", " "))
+        local cpu_usage = string.format("%3d", cpu_now.usage)
+        widget:set_markup(space3 .. cpu_usage .. "%" .. markup.font("Tamsyn 4", " "))
     end
 })
 
@@ -237,20 +237,21 @@ cpuwidget = wibox.widget.background()
 cpuwidget:set_widget(cpu_widget)
 cpuwidget:set_bgimage(beautiful.widget_display)
 
--- tmp_widget = wibox.widget.textbox()
--- vicious.register(tmp_widget, vicious.widgets.thermal, vspace1 .. "$1°C" .. vspace1, 9, "thermal_zone0")
+tmp_widget = wibox.widget.textbox()
+vicious.register(tmp_widget, vicious.widgets.thermal, vspace1 .. "$1°C" .. vspace1, 9, "thermal_zone0")
 
--- widget_tmp = wibox.widget.imagebox()
--- widget_tmp:set_image(beautiful.widget_tmp)
--- tmpwidget = wibox.widget.background()
--- tmpwidget:set_widget(tmp_widget)
--- tmpwidget:set_bgimage(beautiful.widget_display)
+widget_tmp = wibox.widget.imagebox()
+widget_tmp:set_image(beautiful.widget_tmp)
+tmpwidget = wibox.widget.background()
+tmpwidget:set_widget(tmp_widget)
+tmpwidget:set_bgimage(beautiful.widget_display)
 
 -- | MEM | --
 
 mem_widget = lain.widgets.mem({
     settings = function()
-        widget:set_markup(space3 .. mem_now.used .. "MB" .. markup.font("Tamsyn 4", " "))
+        local mem_usage = string.format("%4d", mem_now.used)
+        widget:set_markup(space3 .. mem_usage .. "MB" .. markup.font("Tamsyn 4", " "))
     end
 })
 
@@ -266,7 +267,7 @@ fs_widget = wibox.widget.textbox()
 vicious.register(fs_widget, vicious.widgets.fs, vspace1 .. "${/ avail_gb}GB" .. vspace1, 2)
 
 widget_fs = wibox.widget.imagebox()
-widget_fs:set_image(beautiful.widget_fs)
+widget_fs:set_image(beautiful.widget_fs_hdd)
 fswidget = wibox.widget.background()
 fswidget:set_widget(fs_widget)
 fswidget:set_bgimage(beautiful.widget_display)
@@ -292,6 +293,41 @@ widget_netul:set_image(beautiful.widget_netul)
 netwidgetul = wibox.widget.background()
 netwidgetul:set_widget(net_widgetul)
 netwidgetul:set_bgimage(beautiful.widget_display)
+
+-- | BAT | --
+
+bat_widget = wibox.widget.textbox()
+vicious.register(bat_widget, vicious.widgets.bat, vspace1 .. "$2%" .. vspace1, 9, "BAT0")
+
+widget_bat = wibox.widget.imagebox()
+widget_bat:set_image(beautiful.widget_bat)
+batwidget = wibox.widget.background()
+batwidget:set_widget(bat_widget)
+batwidget:set_bgimage(beautiful.widget_display)
+
+-- | WI-FI | --
+
+wifi_widget = wibox.widget.textbox()
+vicious.register(wifi_widget, vicious.widgets.wifi, vspace1 .. "${ssid}" .. vspace1, 9, "wlo1")
+
+widget_wifi = wibox.widget.imagebox()
+widget_wifi:set_image(beautiful.widget_wifi)
+wifiwidget = wibox.widget.background()
+wifiwidget:set_widget(wifi_widget)
+wifiwidget:set_bgimage(beautiful.widget_display)
+
+-- | VOL | --
+
+vol_widget = wibox.widget.textbox()
+vicious.register(vol_widget, vicious.widgets.volume, vspace1 .. "$1%" .. vspace1, 9, "Master")
+
+widget_vol = wibox.widget.imagebox()
+widget_vol:set_image(beautiful.widget_vol)
+volwidget = wibox.widget.background()
+volwidget:set_widget(vol_widget)
+volwidget:set_bgimage(beautiful.widget_display)
+
+
 
 -- | Clock / Calendar | --
 
@@ -370,16 +406,16 @@ mypromptbox       = {}
 mylayoutbox       = {}
 
 for s = 1, screen.count() do
-   
+
     mypromptbox[s] = awful.widget.prompt()
-    
+
     mylayoutbox[s] = awful.widget.layoutbox(s)
     mylayoutbox[s]:buttons(awful.util.table.join(
                            awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
-    
+
     mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
@@ -400,26 +436,26 @@ for s = 1, screen.count() do
         right_layout:add(spr5px)
     end
 
-    right_layout:add(spr)
+    --right_layout:add(spr)
 
-    right_layout:add(prev_icon)
-    right_layout:add(spr)
-    right_layout:add(stop_icon)
-    right_layout:add(spr)
-    right_layout:add(play_pause_icon)
-    right_layout:add(spr)
-    right_layout:add(next_icon)
-    right_layout:add(mpd_sepl)
-    right_layout:add(musicwidget)
-    right_layout:add(mpd_sepr)
+    --right_layout:add(prev_icon)
+    --right_layout:add(spr)
+    --right_layout:add(stop_icon)
+    --right_layout:add(spr)
+    --right_layout:add(play_pause_icon)
+    --right_layout:add(spr)
+    --right_layout:add(next_icon)
+    --right_layout:add(mpd_sepl)
+    --right_layout:add(musicwidget)
+    --right_layout:add(mpd_sepr)
 
-    right_layout:add(spr)
+    --right_layout:add(spr)
 
-    right_layout:add(widget_mail)
-    right_layout:add(widget_display_l)
-    right_layout:add(mailwidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+    --right_layout:add(widget_mail)
+    --right_layout:add(widget_display_l)
+    --right_layout:add(mailwidget)
+    --right_layout:add(widget_display_r)
+    --right_layout:add(spr5px)
 
     right_layout:add(spr)
 
@@ -427,11 +463,13 @@ for s = 1, screen.count() do
     right_layout:add(widget_display_l)
     right_layout:add(cpuwidget)
     right_layout:add(widget_display_r)
-    -- right_layout:add(widget_display_c)
-    -- right_layout:add(tmpwidget)
-    -- right_layout:add(widget_tmp)
-    -- right_layout:add(widget_display_r)
     right_layout:add(spr5px)
+
+    --right_layout:add(widget_tmp)
+    --right_layout:add(widget_display_l)
+    --right_layout:add(tmpwidget)
+    --right_layout:add(widget_display_r)
+    --right_layout:add(spr5px)
 
     right_layout:add(spr)
 
@@ -443,13 +481,13 @@ for s = 1, screen.count() do
 
     right_layout:add(spr)
 
-    right_layout:add(widget_fs)
-    right_layout:add(widget_display_l)
-    right_layout:add(fswidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+    --right_layout:add(widget_fs)
+    --right_layout:add(widget_display_l)
+    --right_layout:add(fswidget)
+    --right_layout:add(widget_display_r)
+    --right_layout:add(spr5px)
 
-    right_layout:add(spr)
+    --right_layout:add(spr)
 
     right_layout:add(widget_netdl)
     right_layout:add(widget_display_l)
@@ -458,6 +496,30 @@ for s = 1, screen.count() do
     right_layout:add(netwidgetul)
     right_layout:add(widget_display_r)
     right_layout:add(widget_netul)
+
+    right_layout:add(spr)
+
+    right_layout:add(widget_wifi)
+    right_layout:add(widget_display_l)
+    right_layout:add(wifiwidget)
+    right_layout:add(widget_display_r)
+    right_layout:add(spr5px)
+
+    right_layout:add(spr)
+
+    right_layout:add(widget_bat)
+    right_layout:add(widget_display_l)
+    right_layout:add(batwidget)
+    right_layout:add(widget_display_r)
+    right_layout:add(spr5px)
+
+    right_layout:add(spr)
+
+    right_layout:add(widget_vol)
+    right_layout:add(widget_display_l)
+    right_layout:add(volwidget)
+    right_layout:add(widget_display_r)
+    right_layout:add(spr5px)
 
     right_layout:add(spr)
 
@@ -722,7 +784,7 @@ end
 -- | Autostart | --
 
 os.execute("pkill compton")
-os.execute("setxkbmap -layout 'us,ua' -variant 'winkeys' -option 'grp:caps_toggle,grp_led:caps,compose:menu' &")
+os.execute("setxkbmap -layout 'us,ru' -variant 'winkeys' -option 'grp:caps_toggle,grp_led:caps,compose:ralt' &")
 run_once("parcellite")
 run_once("kbdd")
 -- run_once("compton")

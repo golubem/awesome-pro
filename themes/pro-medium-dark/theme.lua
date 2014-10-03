@@ -49,10 +49,10 @@ theme.layout_tiletop    = theme.icons .. "/panel/layouts/tiletop.png"
 
 -- | Taglist | --
 
-theme.taglist_bg_empty    = "png:" .. theme.icons .. "/panel/taglist/empty.png"
-theme.taglist_bg_occupied = "png:" .. theme.icons .. "/panel/taglist/occupied.png"
-theme.taglist_bg_urgent   = "png:" .. theme.icons .. "/panel/taglist/urgent.png"
-theme.taglist_bg_focus    = "png:" .. theme.icons .. "/panel/taglist/focus.png"
+theme.taglist_bg_empty    = "png:" .. theme.icons .. "/panel/taglist_2/empty.png"
+theme.taglist_bg_occupied = "png:" .. theme.icons .. "/panel/taglist_2/occupied.png"
+theme.taglist_bg_urgent   = "png:" .. theme.icons .. "/panel/taglist_2/urgent.png"
+theme.taglist_bg_focus    = "png:" .. theme.icons .. "/panel/taglist_2/focus.png"
 theme.taglist_font        = "Terminus 11"
 
 -- | Tasklist | --
@@ -122,6 +122,18 @@ theme.widget_mail = theme.icons .. "/panel/widgets/widget_mail.png"
 
 theme.widget_netdl = theme.icons .. "/panel/widgets/widget_netdl.png"
 theme.widget_netul = theme.icons .. "/panel/widgets/widget_netul.png"
+
+-- | BAT | --
+
+theme.widget_bat = theme.icons .. "/panel/widgets/widget_bat.png"
+
+-- | WIFI | --
+
+theme.widget_wifi = theme.icons .. "/panel/widgets/widget_wifi.png"
+
+-- | VOL | --
+
+theme.widget_vol = theme.icons .. "/panel/widgets/widget_vol.png"
 
 -- | Misc | --
 
