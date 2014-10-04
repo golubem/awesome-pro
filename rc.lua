@@ -8,12 +8,12 @@ local vicious    = require("vicious")
 local naughty    = require("naughty")
 local lain       = require("lain")
 local cyclefocus = require('cyclefocus')
+local config     = require("config")
 
 -- | Theme | --
 
 local theme = "pro-medium-dark"
-
-beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/" .. theme .. "/theme.lua")
+config.set_theme(theme)
 
 -- | Error handling | --
 
@@ -80,19 +80,11 @@ local layouts =
 
 -- | Wallpaper | --
 
-if beautiful.wallpaper then
-    for s = 1, screen.count() do
-        gears.wallpaper.tiled(beautiful.wallpaper, s)
-        -- gears.wallpaper.maximized(beautiful.wallpaper, s, true)
-    end
-end
+config.set_wallpaper(beautiful.wallpaper)
 
 -- | Tags | --
 
-tags = {}
-for s = 1, screen.count() do
-    tags[s] = awful.tag({ "  ", "  ", "  ", "  ", "  " }, s, layouts[1])
-end
+tags = config.create_tags({ "  ", "  ", "  ", "  ", "  " })
 
 -- | Menu | --
 
