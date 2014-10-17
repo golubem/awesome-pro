@@ -15,8 +15,9 @@ local layouts =
 }
 
 local panel     = {}
-local launcher = {}
+local launcher  = {}
 local wm_layout = {}
+local select_screen = 1
 
 function config.set_theme(theme)
     beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/" .. theme .. "/theme.lua")
@@ -24,24 +25,18 @@ end
 
 function config.set_wallpaper(wallpaper)
     if wallpaper then
-        for s = 1, screen.count() do
-            gears.wallpaper.tiled(wallpaper, s)
-        end
+        gears.wallpaper.tiled(wallpaper, select_screen)
     end
 end
 
 function config.create_tags(names)
-    tags = {}
-    for s = 1, screen.count() do
-        tags = awful.tag(names, s, layouts[1])
-    end
-    return tags
+    return awful.tag(names, select_screen, layouts[1])
 end
 
 function config.add_panel(pos, size, l_widgets, r_widgets)
-    panel    = awful.wibox({ position = pos, screen = s, height = size })
+    panel = awful.wibox({ position = pos, screen = select_screen, height = size })
 
-    local left_layout  = wibox.layout.fixed.horizontal()
+    local left_layout = wibox.layout.fixed.horizontal()
     for i = 1, #l_widgets do
         left_layout:add( l_widgets[i] )
     end
