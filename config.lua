@@ -54,10 +54,10 @@ function config.add_panel(pos, size, l_widgets, r_widgets)
         local left_layout  = wibox.layout.fixed.horizontal()
         local right_layout = wibox.layout.fixed.horizontal()
 
-        for i = 1, #l_widgets then
+        for i = 1, #l_widgets do
             left_layout:add( l_widgets[i] )
         end
-        for i = 1, #r_widgets then
+        for i = 1, #r_widgets do
             right_layout:add( r_widgets[i] )
         end
 
