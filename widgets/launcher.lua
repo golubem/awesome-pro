@@ -1,0 +1,1 @@
+launcher = awful.widget.prompt()

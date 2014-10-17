@@ -346,8 +346,8 @@ clockwidget:buttons(awful.util.table.join(awful.button({}, 1,
 
 -- | Taglist | --
 
-mytaglist         = {}
-mytaglist.buttons = awful.util.table.join(
+taglist         = {}
+taglist.buttons = awful.util.table.join(
                     awful.button({ }, 1, awful.tag.viewonly),
                     awful.button({ modkey }, 1, awful.client.movetotag),
                     awful.button({ }, 3, awful.tag.viewtoggle),
@@ -358,8 +358,8 @@ mytaglist.buttons = awful.util.table.join(
 
 -- | Tasklist | --
 
-mytasklist         = {}
-mytasklist.buttons = awful.util.table.join(
+tasklist         = {}
+tasklist.buttons = awful.util.table.join(
                      awful.button({ }, 1, function (c)
                                               if c == client.focus then
                                                   c.minimized = true
@@ -393,147 +393,142 @@ mytasklist.buttons = awful.util.table.join(
 
 -- | PANEL | --
 
-mywibox           = {}
-mypromptbox       = {}
-mylayoutbox       = {}
+panel           = {}
+launcher       = {}
+wm_layout       = {}
 
-for s = 1, screen.count() do
+launcher = awful.widget.prompt()
 
-    mypromptbox[s] = awful.widget.prompt()
+wm_layout = awful.widget.layoutbox(s)
+wm_layout:buttons(awful.util.table.join(
+                       awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
+                       awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
+                       awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
+                       awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
 
-    mylayoutbox[s] = awful.widget.layoutbox(s)
-    mylayoutbox[s]:buttons(awful.util.table.join(
-                           awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
-                           awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
-                           awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
+taglist = awful.widget.taglist(1, awful.widget.taglist.filter.all, taglist.buttons)
 
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+tasklist = awful.widget.tasklist(1, awful.widget.tasklist.filter.currenttags, tasklist.buttons)
 
-    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+panel = awful.wibox({ position = "top", screen = s, height = "22" })
 
-    mywibox[s] = awful.wibox({ position = "top", screen = s, height = "22" })
+local left_layout = wibox.layout.fixed.horizontal()
+left_layout:add(spr5px)
+left_layout:add(taglist)
+left_layout:add(spr5px)
 
-    local left_layout = wibox.layout.fixed.horizontal()
-    left_layout:add(spr5px)
-    left_layout:add(mytaglist[s])
-    left_layout:add(spr5px)
+local right_layout = wibox.layout.fixed.horizontal()
+right_layout:add(spr)
+right_layout:add(spr5px)
+right_layout:add(launcher)
+right_layout:add(wibox.widget.systray())
+right_layout:add(spr5px)
 
-    local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then
-        right_layout:add(spr)
-        right_layout:add(spr5px)
-        right_layout:add(mypromptbox[s])
-        right_layout:add(wibox.widget.systray())
-        right_layout:add(spr5px)
-    end
+--right_layout:add(spr)
 
-    --right_layout:add(spr)
+--right_layout:add(prev_icon)
+--right_layout:add(spr)
+--right_layout:add(stop_icon)
+--right_layout:add(spr)
+--right_layout:add(play_pause_icon)
+--right_layout:add(spr)
+--right_layout:add(next_icon)
+--right_layout:add(mpd_sepl)
+--right_layout:add(musicwidget)
+--right_layout:add(mpd_sepr)
 
-    --right_layout:add(prev_icon)
-    --right_layout:add(spr)
-    --right_layout:add(stop_icon)
-    --right_layout:add(spr)
-    --right_layout:add(play_pause_icon)
-    --right_layout:add(spr)
-    --right_layout:add(next_icon)
-    --right_layout:add(mpd_sepl)
-    --right_layout:add(musicwidget)
-    --right_layout:add(mpd_sepr)
+--right_layout:add(spr)
 
-    --right_layout:add(spr)
+--right_layout:add(widget_mail)
+--right_layout:add(widget_display_l)
+--right_layout:add(mailwidget)
+--right_layout:add(widget_display_r)
+--right_layout:add(spr5px)
 
-    --right_layout:add(widget_mail)
-    --right_layout:add(widget_display_l)
-    --right_layout:add(mailwidget)
-    --right_layout:add(widget_display_r)
-    --right_layout:add(spr5px)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+right_layout:add(widget_cpu)
+right_layout:add(widget_display_l)
+right_layout:add(cpuwidget)
+right_layout:add(widget_display_r)
+right_layout:add(spr5px)
 
-    right_layout:add(widget_cpu)
-    right_layout:add(widget_display_l)
-    right_layout:add(cpuwidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+--right_layout:add(widget_tmp)
+--right_layout:add(widget_display_l)
+--right_layout:add(tmpwidget)
+--right_layout:add(widget_display_r)
+--right_layout:add(spr5px)
 
-    --right_layout:add(widget_tmp)
-    --right_layout:add(widget_display_l)
-    --right_layout:add(tmpwidget)
-    --right_layout:add(widget_display_r)
-    --right_layout:add(spr5px)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+right_layout:add(widget_mem)
+right_layout:add(widget_display_l)
+right_layout:add(memwidget)
+right_layout:add(widget_display_r)
+right_layout:add(spr5px)
 
-    right_layout:add(widget_mem)
-    right_layout:add(widget_display_l)
-    right_layout:add(memwidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+--right_layout:add(widget_fs)
+--right_layout:add(widget_display_l)
+--right_layout:add(fswidget)
+--right_layout:add(widget_display_r)
+--right_layout:add(spr5px)
 
-    --right_layout:add(widget_fs)
-    --right_layout:add(widget_display_l)
-    --right_layout:add(fswidget)
-    --right_layout:add(widget_display_r)
-    --right_layout:add(spr5px)
+--right_layout:add(spr)
 
-    --right_layout:add(spr)
+right_layout:add(widget_netdl)
+right_layout:add(widget_display_l)
+right_layout:add(netwidgetdl)
+right_layout:add(widget_display_c)
+right_layout:add(netwidgetul)
+right_layout:add(widget_display_r)
+right_layout:add(widget_netul)
 
-    right_layout:add(widget_netdl)
-    right_layout:add(widget_display_l)
-    right_layout:add(netwidgetdl)
-    right_layout:add(widget_display_c)
-    right_layout:add(netwidgetul)
-    right_layout:add(widget_display_r)
-    right_layout:add(widget_netul)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+right_layout:add(widget_wifi)
+right_layout:add(widget_display_l)
+right_layout:add(wifiwidget)
+right_layout:add(widget_display_r)
+right_layout:add(spr5px)
 
-    right_layout:add(widget_wifi)
-    right_layout:add(widget_display_l)
-    right_layout:add(wifiwidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+right_layout:add(widget_bat)
+right_layout:add(widget_display_l)
+right_layout:add(batwidget)
+right_layout:add(widget_display_r)
+right_layout:add(spr5px)
 
-    right_layout:add(widget_bat)
-    right_layout:add(widget_display_l)
-    right_layout:add(batwidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+right_layout:add(widget_vol)
+right_layout:add(widget_display_l)
+right_layout:add(volwidget)
+right_layout:add(widget_display_r)
+right_layout:add(spr5px)
 
-    right_layout:add(widget_vol)
-    right_layout:add(widget_display_l)
-    right_layout:add(volwidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+right_layout:add(widget_clock)
+right_layout:add(widget_display_l)
+right_layout:add(clockwidget)
+right_layout:add(widget_display_r)
+right_layout:add(spr5px)
 
-    right_layout:add(widget_clock)
-    right_layout:add(widget_display_l)
-    right_layout:add(clockwidget)
-    right_layout:add(widget_display_r)
-    right_layout:add(spr5px)
+right_layout:add(spr)
 
-    right_layout:add(spr)
+right_layout:add(wm_layout)
 
-    right_layout:add(mylayoutbox[s])
+local layout = wibox.layout.align.horizontal()
+layout:set_left(left_layout)
+layout:set_middle(tasklist)
+layout:set_right(right_layout)
 
-    local layout = wibox.layout.align.horizontal()
-    layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
-    layout:set_right(right_layout)
+panel:set_bg(beautiful.panel)
 
-    mywibox[s]:set_bg(beautiful.panel)
-
-    mywibox[s]:set_widget(layout)
-end
+panel:set_widget(layout)
 
 -- | Mouse bindings | --
 
@@ -549,7 +544,7 @@ globalkeys = awful.util.table.join(
 
     awful.key({ modkey,           }, "w",      function () mainmenu:show() end),
     awful.key({ modkey,           }, "Escape", function () exec("/usr/local/sbin/zaprat --toggle") end),
-    awful.key({ modkey            }, "r",      function () mypromptbox[mouse.screen]:run() end),
+    awful.key({ modkey            }, "r",      function () launcher:run() end),
     awful.key({ modkey,           }, "j",
         function ()
             awful.client.focus.byidx( 1)
@@ -603,7 +598,7 @@ globalkeys = awful.util.table.join(
     -- awful.key({ modkey }, "x",
     --           function ()
     --               awful.prompt.run({ prompt = "Run Lua code: " },
-    --               mypromptbox[mouse.screen].widget,
+    --               launcher[mouse.screen].widget,
     --               awful.util.eval, nil,
     --               awful.util.getdir("cache") .. "/history_eval")
     --           end)
